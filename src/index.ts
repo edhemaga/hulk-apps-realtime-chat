@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 
 import cors from 'cors';
+import bodyParser from "body-parser";
 
 //Socket
 import http from 'http';
@@ -19,6 +20,9 @@ dotenv.config({ path: resolve(__dirname, ".env") });
 const app: Express = express();
 const port = process.env.PORT || 3001;
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
 //TODO izbaciti u poseban fajl
 //CORS
 const allowedOrigins = ['http://localhost:3000'];
@@ -35,7 +39,7 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket: Socket) => {
-    console.log(socket.id);
+    // console.log(socket.id);
 })
 
 app.use('/user', userRoutes);

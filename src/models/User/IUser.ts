@@ -15,6 +15,6 @@ export interface IUserRegistration extends Partial<IUser> {
 }
 
 export interface IUserLogin {
-    email: string;
+    username: string;
     password: string;
 }

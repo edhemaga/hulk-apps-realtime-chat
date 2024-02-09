@@ -1,5 +1,7 @@
 import express, { Express, Request, Response } from "express";
 
+import cors from 'cors';
+
 //Socket
 import http from 'http';
 import { Server, Socket } from 'socket.io';
@@ -17,16 +19,28 @@ dotenv.config({ path: resolve(__dirname, ".env") });
 const app: Express = express();
 const port = process.env.PORT || 3001;
 
-//Socket ini
+//TODO izbaciti u poseban fajl
+//CORS
+const allowedOrigins = ['http://localhost:3000'];
+
+const options: cors.CorsOptions = {
+    origin: allowedOrigins
+};
+app.use(cors(options));
+
+//Socket init
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
+});
 
 io.on('connection', (socket: Socket) => {
-    console.log("A user has connected!");
+    console.log(socket.id);
 })
 
 app.use('/user', userRoutes);
 
-app.listen(port, () => {
+//Entire server needs to be listening, not only app 
+server.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });

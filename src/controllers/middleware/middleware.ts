@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
 export const emptyBodyCheck = (req: Request, res: Response, next: NextFunction) => {
-    console.log(req)
     const emptyBody =
         (!req.body || Object.keys(req.body).length == 0) ?? false;
     if (emptyBody)

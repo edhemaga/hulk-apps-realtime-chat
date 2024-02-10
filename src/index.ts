@@ -1,7 +1,9 @@
 import express, { Express, Request, Response } from "express";
 
+//Other
 import cors from 'cors';
 import bodyParser from "body-parser";
+import mongoose from "mongoose";
 
 //Socket
 import http from 'http';
@@ -9,6 +11,8 @@ import { Server, Socket } from 'socket.io';
 
 //Routes
 import userRoutes from "../src/controllers/user";
+import messageRoutes from "../src/controllers/message"
+import groupRoutes from "../src/controllers/group"
 
 //Env
 import { resolve } from 'path';
@@ -21,7 +25,7 @@ const app: Express = express();
 const port = process.env.PORT || 3001;
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //TODO izbaciti u poseban fajl
 //CORS
@@ -38,13 +42,21 @@ const io = new Server(server, {
     cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
 });
 
-io.on('connection', (socket: Socket) => {
-    // console.log(socket.id);
-})
+//DB connection
+mongoose.connect(process.env.MONGO_DB ?? '')
+    .then(() =>
+        //Entire server needs to be listening, not only app 
+        server.listen(port, () => {
+            console.log(`Server is running at http://localhost:${port}`);
+            io.on('connection', (socket: Socket) => {
+            })
+        },
+        ),
+    )
+    .catch((error) => console.log(error));
+
 
 app.use('/user', userRoutes);
+app.use('/group', groupRoutes);
+app.use('/message', messageRoutes);
 
-//Entire server needs to be listening, not only app 
-server.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-});

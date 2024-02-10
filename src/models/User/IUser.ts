@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
+
 import { IBase } from "../Base/IBase";
-import { IMessage } from "../Message/IMessage";
+
 
 export interface IUser extends IBase {
     name: string;
@@ -7,10 +9,48 @@ export interface IUser extends IBase {
     dob: Date;
     email: string;
     password: string;
-    messages: IMessage[];
+    groups: string[];
 }
 
-export interface IUserRegistration extends Partial<IUser> {
+const userSchema = new mongoose.Schema({
+    isDeleted: {
+        type: Boolean,
+        required: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    surname: {
+        type: String,
+        required: true
+    },
+    dob: {
+        type: Date,
+        required: false
+    },
+    createdOn: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    updatedOn: {
+        type: Date,
+        required: false
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+});
+
+export const User = mongoose.model('User', userSchema);
+
+export interface IUserRegistration extends IUser {
     confirmedPassword: string;
 }
 

@@ -6,6 +6,7 @@ import { IMessage, Message } from "../Message/IMessage";
 export interface IGroup extends IBase {
     name: string;
     messages: IMessage[];
+    members: string[];
 }
 
 const groupSchema = new mongoose.Schema<IGroup>({
@@ -26,7 +27,18 @@ const groupSchema = new mongoose.Schema<IGroup>({
         type: String,
         required: true
     },
+    members: {
+        type: [String],
+        required: false,
+        default: []
+    },
     messages: [
-        { type: Message.schema }
+        {
+            type: [Message.schema],
+            required: false,
+            default: []
+        },
     ],
 });
+
+export const Group = mongoose.model('Group', groupSchema);

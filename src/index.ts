@@ -51,7 +51,7 @@ mongoose.connect(process.env.MONGO_DB ?? '')
         server.listen(port, () => {
             io.on('connection', (socket: Socket) => {
                 socket.on('send_message', (data: IMessage) => {
-                     createMessage(data);
+                    createMessage(data);
                     //io must emit instead of socket, because with socket your message would be returned only to the client it sent
                     io.emit(
                         `receive_message_group_${data.groupId}`,

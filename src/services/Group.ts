@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { Group, IGroup } from "../models/Group/IGroup";
 
 export const getGroup = async (senderId: string, receiverId: string): Promise<IGroup | undefined> => {

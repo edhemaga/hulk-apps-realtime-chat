@@ -18,7 +18,7 @@ router.get('/group/:groupId', async (req: Request, res: Response) => {
     res.status(200).json(messages);
 })
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', [emptyBodyCheck], async (req: Request, res: Response) => {
     const message: IMessage = req.body;
 
     await createMessage(message);

@@ -27,11 +27,10 @@ const groupSchema = new mongoose.Schema<IGroup>({
         type: String,
         required: true
     },
-    members: {
-        type: [String],
+    members: [{
+        type: mongoose.Schema.Types.ObjectId,
         required: false,
-        default: []
-    },
+    }],
     messages: [
         {
             type: [Message.schema],

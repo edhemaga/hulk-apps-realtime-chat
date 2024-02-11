@@ -1,4 +1,3 @@
-import { selectClasses } from "@mui/material";
 import mongoose from "mongoose";
 import { Group, IGroup } from "../models/Group/IGroup";
 
@@ -9,14 +8,12 @@ export const getGroup = async (senderId: string, receiverId: string): Promise<IG
     // $Where is not allowed in free atlas tier, so filtering will be done in the code
     // const group = await Group.findOne(
     //     {
-    //         members: { $in: groupMembers },
+    //         members: { $all: groupMembers },
     //         $where: `this.members.length < 2`
     //     }
     // );
 
-    // const group = await Group.findOne({ members: { $in: [...groupMembers] } });
-
-    const groups: IGroup[] = await Group.find({ members: { $in: [...groupMembers] } });
+    const groups: IGroup[] = await Group.find({ members: { $all: [...groupMembers] } });
     const group: IGroup = groups.find((arg: IGroup) => arg.members.length = 2) as IGroup;
 
     //TODO Add error handling if group is undefined or empty 
@@ -27,7 +24,7 @@ export const getGroup = async (senderId: string, receiverId: string): Promise<IG
             members: [...groupMembers],
         });
 
-        return newGroup.save();
+        return await newGroup.save();
     }
 
     return group;

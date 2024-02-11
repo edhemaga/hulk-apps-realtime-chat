@@ -28,7 +28,7 @@ const groupSchema = new mongoose.Schema<IGroup>({
         required: true
     },
     members: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: false,
     }],
     messages: [

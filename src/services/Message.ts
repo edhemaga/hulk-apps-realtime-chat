@@ -1,7 +1,7 @@
 import { Group } from "../models/Group/IGroup";
 import { IMessage, Message } from "../models/Message/IMessage";
 
-export const createMessage = async (message: Partial<IMessage>) => {
+export const createMessage = (message: Partial<IMessage>) => {
     const { content, senderId, groupId } = message;
 
     try {

@@ -4,8 +4,7 @@ import mongoose from "mongoose";
 
 export interface IMessage extends IBase {
     senderId: string;
-    receiverId: string;
-    groupId?: string;
+    groupId: string;
     content: string;
 }
 
@@ -27,13 +26,9 @@ const messageSchema = new mongoose.Schema<IMessage>({
         type: String,
         required: true
     },
-    receiverId: {
-        type: String,
-        required: true
-    },
     groupId: {
         type: String,
-        required: false
+        required: true
     },
     content: {
         type: String,

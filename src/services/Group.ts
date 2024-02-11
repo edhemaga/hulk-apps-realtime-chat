@@ -39,7 +39,9 @@ export const getCollectiveGroup = async (groupMembers: string[]): Promise<IGroup
 }
 
 export const getAllUserCollectiveGroups = async (groupMember: string): Promise<IGroup[]> => {
-    return await Group.find({ members: { $in: [groupMember] } });
+    const groups = await Group.find({ members: { $in: [groupMember] } });
+    
+    return groups.filter((arg: IGroup) => arg.members.length > 2);
 }
 
 export const createGroup = () => {

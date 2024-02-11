@@ -19,6 +19,24 @@ export const getAllUsers = async (): Promise<Partial<IUser>[]> => {
     }
 };
 
+
+export const getAllUsersWithoutCurrentUser = async (id: string): Promise<Partial<IUser>[]> => {
+    try {
+        const users = await User.find({ _id: { $ne: id } });
+        return users.map(user => {
+            return {
+                id: user?.id,
+                name: user.name,
+                surname: user.surname,
+                email: user.email
+            }
+        })
+    } catch (error) {
+        console.error('Error getting users:', error);
+        return [];
+    }
+};
+
 export const createUser = async (user: IUserRegistration) => {
     const { name, surname, dob, password, email } = user;
 

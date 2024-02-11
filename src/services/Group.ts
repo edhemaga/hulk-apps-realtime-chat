@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
 import { Group, IGroup } from "../models/Group/IGroup";
 
-export const getGroup = async (senderId: string, receiverId: string): Promise<IGroup> => {
+export const getGroup = async (senderId: string, receiverId: string): Promise<IGroup | undefined> => {
 
     const groupMembers = [senderId, receiverId];
-
     // $Where is not allowed in free atlas tier, so filtering will be done in the code
     // const group = await Group.findOne(
     //     {
@@ -30,13 +29,17 @@ export const getGroup = async (senderId: string, receiverId: string): Promise<IG
     return group;
 }
 
-export const getCollectiveGroups = async (groupMembers: string[]): Promise<IGroup[]> => {
+export const getCollectiveGroup = async (groupMembers: string[]): Promise<IGroup[]> => {
 
     // As with the previous function, $where is also not avaliable in free tier
-    const groups = await Group.find({ members: { $in: groupMembers } });
+    const groups = await Group.find({ members: { $all: [...groupMembers] } });
 
     return groups.filter((arg: IGroup) => arg.members.length > 2);
 
+}
+
+export const getAllUserCollectiveGroups = async (groupMember: string): Promise<IGroup[]> => {
+    return await Group.find({ members: { $in: [groupMember] } });
 }
 
 export const createGroup = () => {

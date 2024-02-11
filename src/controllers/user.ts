@@ -5,17 +5,20 @@ import { IGroup } from '../models/Group/IGroup';
 import { IUser, IUserLogin, IUserRegistration } from '../models/User/IUser';
 
 //Service
-import { createUser, getAllUsers, login } from '../services/User';
+import { createUser, getAllUsers, getAllUsersWithoutCurrentUser, login } from '../services/User';
 
 //Middleware
 import { emptyBodyCheck } from './middleware/middleware';
+import { getAllUserCollectiveGroups } from '../services/Group';
 
 const router = express.Router();
 
-router.get('/info', async (req: Request, res: Response) => {
+router.get('/info/:id', async (req: Request, res: Response) => {
+    const userId: string = req.params.id;
+
     const response = {
-        persons: await getAllUsers(),
-        groups: []
+        persons: await getAllUsersWithoutCurrentUser(userId),
+        groups: await getAllUserCollectiveGroups(userId)
     }
     res.status(200).json(response);
 })

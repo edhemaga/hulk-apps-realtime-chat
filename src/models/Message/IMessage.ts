@@ -11,7 +11,8 @@ export interface IMessage extends IBase {
 const messageSchema = new mongoose.Schema<IMessage>({
     isDeleted: {
         type: Boolean,
-        required: true
+        required: true,
+        default: false
     },
     createdOn: {
         type: Date,
@@ -33,7 +34,16 @@ const messageSchema = new mongoose.Schema<IMessage>({
     content: {
         type: String,
         required: true
-    },
+    }
+});
+
+messageSchema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret._id;
+    }
 });
 
 export const Message = mongoose.model('Message', messageSchema);

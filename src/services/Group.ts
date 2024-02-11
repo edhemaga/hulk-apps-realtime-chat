@@ -14,7 +14,7 @@ export const getGroup = async (senderId: string, receiverId: string): Promise<IG
 
     const groups: IGroup[] = await Group.find({ members: { $all: [...groupMembers] } });
     const group: IGroup = groups.find((arg: IGroup) => arg.members.length = 2) as IGroup;
-
+        
     //TODO Add error handling if group is undefined or empty 
     if (!group) {
         const newGroup = new Group({
@@ -40,7 +40,7 @@ export const getCollectiveGroup = async (groupMembers: string[]): Promise<IGroup
 
 export const getAllUserCollectiveGroups = async (groupMember: string): Promise<IGroup[]> => {
     const groups = await Group.find({ members: { $in: [groupMember] } });
-    
+
     return groups.filter((arg: IGroup) => arg.members.length > 2);
 }
 

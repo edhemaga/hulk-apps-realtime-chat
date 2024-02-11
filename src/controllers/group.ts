@@ -12,6 +12,7 @@ import { getGroup } from '../services/Group';
 import { emptyBodyCheck } from './middleware/middleware';
 import { createMessage } from '../services/Message';
 import { IMessage } from '../models/Message/IMessage';
+import { IGroup } from '../models/Group/IGroup';
 
 const router = express.Router();
 
@@ -29,10 +30,7 @@ router.get('/:senderId/:receiverId', async (req: Request, res: Response) => {
 
 router.post('/:groupId', async (req: Request, res: Response) => {
     const groupId: string = req.params.groupId;
-    const message: IMessage = req.body;
 
-    await createMessage(groupId, message);
-    
     res.status(200).json("Message successfully created!")
 });
 

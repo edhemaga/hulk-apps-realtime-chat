@@ -51,6 +51,15 @@ const userSchema = new mongoose.Schema({
     // }
 });
 
+userSchema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret._id;
+    }
+});
+
 export const User = mongoose.model('User', userSchema);
 
 export interface IUserRegistration extends IUser {

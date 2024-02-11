@@ -1,16 +1,21 @@
+import { Group } from "../models/Group/IGroup";
 import { IMessage, Message } from "../models/Message/IMessage";
 
-export const createMessage = async (groupId: string, message: Partial<IMessage>) => {
-    const { content, senderId } = message;
+export const createMessage = async (message: Partial<IMessage>) => {
+    const { content, senderId, groupId } = message;
 
     try {
         const newMessage = new Message({
-            isDeleted: false,
             groupId,
             content,
             senderId
         });
-        await newMessage.save();
+        Group.findByIdAndUpdate(
+            groupId,
+            { $push: { messages: newMessage } },
+            { new: true },
+        );
+
     } catch (error) {
         //TODO Add logging
         console.error('Error saving user:', error);

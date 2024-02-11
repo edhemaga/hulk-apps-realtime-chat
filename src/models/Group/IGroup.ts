@@ -40,4 +40,13 @@ const groupSchema = new mongoose.Schema<IGroup>({
     ],
 });
 
+groupSchema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret._id;
+    }
+});
+
 export const Group = mongoose.model('Group', groupSchema);

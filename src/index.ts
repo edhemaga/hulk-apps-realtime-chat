@@ -17,6 +17,8 @@ import groupRoutes from "../src/controllers/group"
 //Env
 import { resolve } from 'path';
 import dotenv from "dotenv";
+import { IMessage } from "./models/Message/IMessage";
+import { createMessage } from "./services/Message";
 
 dotenv.config();
 dotenv.config({ path: resolve(__dirname, ".env") });
@@ -47,8 +49,15 @@ mongoose.connect(process.env.MONGO_DB ?? '')
     .then(() =>
         //Entire server needs to be listening, not only app 
         server.listen(port, () => {
-            console.log(`Server is running at http://localhost:${port}`);
             io.on('connection', (socket: Socket) => {
+                socket.on('send_message', (data: IMessage) => {
+                    // createMessage(data);
+                    console.log(`receive_message_group_${data.groupId}`);
+                    socket.emit(
+                        `receive_message`,
+                        { data }
+                    );
+                })
             })
         },
         ),

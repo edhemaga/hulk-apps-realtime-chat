@@ -29,8 +29,8 @@ export const getSingleGroup = async (senderId: string, receiverId: string): Prom
 
     const groups: IGroup[] = await Group.find({ members: { $all: [...groupMembers] } });
     let group: IGroup = groups.find((arg: IGroup) => arg.members.length = 2) as IGroup;
-    
-    const remappedResponse = await getUserInfo(group.members);
+
+    const remappedResponse = await getUserInfo(group?.members ?? []);
 
     //TODO Add error handling if group is undefined or empty 
     if (!group) {

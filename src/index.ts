@@ -55,7 +55,6 @@ mongoose.connect(process.env.MONGO_DB ?? '')
             io.on('connection', (socket: Socket) => {
                 socket.on('send_message', async (data: IMessage) => {
                     const message = await createMessage(data);
-                    console.log(message)
                     //io must emit instead of socket, because with socket your message would be returned only to the client it sent
                     io.emit(
                         `receive_message_group_${data.groupId}`,

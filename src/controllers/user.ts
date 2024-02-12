@@ -26,22 +26,27 @@ router.post('/register', [emptyBodyCheck], async (req: Request, res: Response) =
     try {
         const user = req.body as IUserRegistration;
 
-        if (user.password != user.confirmedPassword) res.status(400).json({ message: 'Password do not match!' });
-
-        await createUser(user);
-        res.status(200).json("User successfully created!");
+        if (user.password != user.confirmedPassword) {
+            res.status(400).json({ message: 'Password do not match!' })
+        }
+        else {
+            await createUser(user);
+            res.status(200).json("User successfully created!");
+        };
     } catch (err) {
         res.status(400).json(err);
     }
 });
 
 router.post('/login', [emptyBodyCheck], async (req: Request, res: Response) => {
-    const user = req.body as IUserLogin;
-    const token = await login(user.username, user.password);
-    if (token)
+    try {
+        const user = req.body as IUserLogin;
+        const token = await login(user.username, user.password);
         res.status(200).json(token);
-    else
+
+    } catch (err) {
         res.status(401).json("Access could not be granted!");
+    }
 });
 
 export default router;

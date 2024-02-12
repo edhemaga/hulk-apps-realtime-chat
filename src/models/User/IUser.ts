@@ -15,7 +15,8 @@ export interface IUser extends IBase {
 const userSchema = new mongoose.Schema({
     isDeleted: {
         type: Boolean,
-        required: true
+        required: false,
+        default: false
     },
     name: {
         type: String,
@@ -31,7 +32,7 @@ const userSchema = new mongoose.Schema({
     },
     createdOn: {
         type: Date,
-        required: true,
+        required: false,
         default: Date.now
     },
     updatedOn: {
@@ -46,9 +47,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // groups: {
-    //     type: [String],
-    // }
 });
 
 userSchema.set('toJSON', {

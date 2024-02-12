@@ -9,14 +9,20 @@ export interface IGroup extends IBase {
     members: string[];
 }
 
+export interface INewGroup {
+    name: string;
+    members: string[];
+}
+
 const groupSchema = new mongoose.Schema<IGroup>({
     isDeleted: {
         type: Boolean,
-        required: true
+        required: false,
+        default: false,
     },
     createdOn: {
         type: Date,
-        required: true,
+        required: false,
         default: Date.now
     },
     updatedOn: {

@@ -1,4 +1,5 @@
-import { Group, IGroup } from "../models/Group/IGroup";
+//Models
+import { Group } from "../models/Group/IGroup";
 import { IMessage, Message } from "../models/Message/IMessage";
 
 export const createMessage = async (message: Partial<IMessage>) => {

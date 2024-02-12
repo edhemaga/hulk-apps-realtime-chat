@@ -19,6 +19,7 @@ import { resolve } from 'path';
 import dotenv from "dotenv";
 import { IMessage } from "./models/Message/IMessage";
 import { createMessage } from "./services/Message";
+import { validateTokenForSocket } from "./controllers/middleware/middleware";
 
 dotenv.config();
 dotenv.config({ path: resolve(__dirname, ".env") });
@@ -43,6 +44,8 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
 });
+
+io.use(validateTokenForSocket);
 
 //DB connection
 mongoose.connect(process.env.MONGO_DB ?? '')

@@ -8,12 +8,12 @@ import { IUser, IUserLogin, IUserRegistration } from '../models/User/IUser';
 import { createUser, getAllUsers, getAllUsersWithoutCurrentUser, login } from '../services/User';
 
 //Middleware
-import { emptyBodyCheck } from './middleware/middleware';
+import { emptyBodyCheck, validateToken } from './middleware/middleware';
 import { getAllUserCollectiveGroups } from '../services/Group';
 
 const router = express.Router();
 
-router.get('/info/:id', async (req: Request, res: Response) => {
+router.get('/info/:id', [validateToken], async (req: Request, res: Response) => {
     const userId: string = req.params.id;
 
     const response = {

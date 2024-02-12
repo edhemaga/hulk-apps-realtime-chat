@@ -7,16 +7,14 @@ import mongoose from 'mongoose';
 
 //Service
 import { getGroup } from '../services/Group';
+import { createMessage } from '../services/Message';
 
 //Middleware
-import { emptyBodyCheck } from './middleware/middleware';
-import { createMessage } from '../services/Message';
-import { IMessage } from '../models/Message/IMessage';
-import { IGroup } from '../models/Group/IGroup';
+import { emptyBodyCheck, validateToken } from './middleware/middleware';
 
 const router = express.Router();
 
-router.get('/:senderId/:receiverId', async (req: Request, res: Response) => {
+router.get('/:senderId/:receiverId', [validateToken], async (req: Request, res: Response) => {
     const senderId = req.params.senderId;
     const receiverId = req.params.receiverId;
     //TODO Add error handling
@@ -28,10 +26,5 @@ router.get('/:senderId/:receiverId', async (req: Request, res: Response) => {
     }
 });
 
-router.post('/:groupId', async (req: Request, res: Response) => {
-    const groupId: string = req.params.groupId;
-
-    res.status(200).json("Message successfully created!")
-});
 
 export default router;

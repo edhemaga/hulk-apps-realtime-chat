@@ -9,7 +9,8 @@ export const createMessage = async (message: Partial<IMessage>) => {
         const newMessage = new Message({
             groupId,
             content,
-            senderId
+            senderId,
+            createdOn: new Date()
         });
 
         await Group.findByIdAndUpdate(
@@ -18,6 +19,7 @@ export const createMessage = async (message: Partial<IMessage>) => {
             { new: true },
         );
 
+        return newMessage;
     } catch (error) {
         //TODO Add logging
         console.error('Error saving user:', error);

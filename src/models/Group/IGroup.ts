@@ -33,9 +33,8 @@ const groupSchema = new mongoose.Schema<IGroup>({
     }],
     messages: [
         {
-            type: [Message.schema],
+            type: Message.schema,
             required: false,
-            default: []
         },
     ],
 });

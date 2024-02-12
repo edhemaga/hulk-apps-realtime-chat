@@ -21,8 +21,8 @@ export const createMessage = async (message: Partial<IMessage>) => {
 
         return newMessage;
     } catch (error) {
+        throw new Error(error as string);
         //TODO Add logging
-        console.error('Error saving user:', error);
     }
 }
 

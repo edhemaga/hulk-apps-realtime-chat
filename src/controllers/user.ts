@@ -1,11 +1,10 @@
 import express, { Request, Response } from 'express';
 
 //Model
-import { IGroup } from '../models/Group/IGroup';
 import { IUser, IUserLogin, IUserRegistration } from '../models/User/IUser';
 
 //Service
-import { createUser, getAllUsers, getAllUsersWithoutCurrentUser, login } from '../services/User';
+import { createUser, getAllUsersWithoutCurrentUser, login } from '../services/User';
 
 //Middleware
 import { emptyBodyCheck, validateToken } from './middleware/middleware';
@@ -34,7 +33,6 @@ router.post('/register', [emptyBodyCheck], async (req: Request, res: Response) =
     } catch (err) {
         res.status(400).json(err);
     }
-
 });
 
 router.post('/login', [emptyBodyCheck], async (req: Request, res: Response) => {

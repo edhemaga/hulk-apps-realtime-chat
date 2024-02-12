@@ -17,7 +17,6 @@ router.get('/room/:id', [validateToken], async (req: Request, res: Response) => 
     res.status(200).json(group);
 
 })
-
 router.get('/:senderId/:receiverId', [validateToken], async (req: Request, res: Response) => {
     const senderId = req.params.senderId;
     const receiverId = req.params.receiverId;

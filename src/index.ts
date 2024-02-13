@@ -52,10 +52,10 @@ mongoose.connect(process.env.MONGO_DB ?? '')
     .then(() =>
         //Entire server needs to be listening, not only app 
         server.listen(port, () => {
-            console.log(process.env.FE)
             io.on('connection', (socket: Socket) => {
                 socket.on('send_message', async (data: IMessage) => {
                     const message = await createMessage(data);
+                    console.log(data)
                     //io must emit instead of socket, because with socket your message would be returned only to the client it sent
                     io.emit(
                         `receive_message_group_${data.groupId}`,

@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //TODO izbaciti u poseban fajl
 //CORS
-const allowedOrigins = ['http://localhost:3000'];
+const allowedOrigins = [String(process.env.BE)];
 
 const options: cors.CorsOptions = {
     origin: allowedOrigins
@@ -42,7 +42,7 @@ app.use(cors(options));
 //Socket init
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
+    cors: { origin: String(process.env.BE), methods: ["GET", "POST"] },
 });
 
 io.use(validateTokenForSocket);

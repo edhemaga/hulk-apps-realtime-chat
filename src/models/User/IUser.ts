@@ -9,7 +9,15 @@ export interface IUser extends IBase {
     dob: Date;
     email: string;
     password: string;
-    groups: string[];
+}
+
+export interface IUserRegistration extends IUser {
+    confirmedPassword: string;
+}
+
+export interface IUserLogin {
+    username: string;
+    password: string;
 }
 
 const userSchema = new mongoose.Schema({
@@ -59,12 +67,3 @@ userSchema.set('toJSON', {
 });
 
 export const User = mongoose.model('User', userSchema);
-
-export interface IUserRegistration extends IUser {
-    confirmedPassword: string;
-}
-
-export interface IUserLogin {
-    username: string;
-    password: string;
-}

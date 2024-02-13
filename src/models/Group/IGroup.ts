@@ -14,6 +14,16 @@ export interface INewGroup {
     members: string[];
 }
 
+export interface IGroupWithUserInfo {
+    group: IGroup,
+    usersInfo: IUserInfo[]
+}
+
+export interface IUserInfo {
+    id: string,
+    fullname: string
+}
+
 const groupSchema = new mongoose.Schema<IGroup>({
     isDeleted: {
         type: Boolean,

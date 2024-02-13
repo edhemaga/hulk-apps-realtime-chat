@@ -62,14 +62,9 @@ export const createUser = async (user: IUserRegistration) => {
 }
 
 export const login = async (email: string, password: string) => {
-    try {
-        const user = await User.findOne({ email, password, isDeleted: false });
-        return createToken(String(user?._id), email);
-    } catch (error) {
-        console.error('Error finding user:', error);
-        return null;
-    }
-
+    const user = await User.findOne({ email, password, isDeleted: false });
+    if (!user) throw new Error('User could not be found!')
+    return createToken(String(user?._id), email);
 }
 
 const createToken = (id: string, email: string): string => {

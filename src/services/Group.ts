@@ -1,11 +1,22 @@
-import { Group, IGroup, INewGroup } from "../models/Group/IGroup";
+import { Group, IGroup, IGroupWithUserInfo, INewGroup, IUserInfo } from "../models/Group/IGroup";
+import { IUser, User } from "../models/User/IUser";
 
-export const getRoom = async (roomId: string): Promise<IGroup | null> => {
+//TODO extract type
+export const getRoom = async (roomId: string): Promise<IGroupWithUserInfo | null> => {
     const group: IGroup | null = await Group.findById(roomId);
-    return group;
+    if (!group) return null;
+
+    const users: IUser[] = await User.find({ _id: { $in: group?.members } })
+
+    const remappedUsers = await getUserInfo(group.members);
+    const response: IGroupWithUserInfo = {
+        group,
+        usersInfo: [...remappedUsers]
+    }
+    return response;
 }
 
-export const getSingleGroup = async (senderId: string, receiverId: string): Promise<IGroup | undefined> => {
+export const getSingleGroup = async (senderId: string, receiverId: string): Promise<IGroupWithUserInfo | undefined> => {
 
     const groupMembers = [senderId, receiverId];
     // $Where is not allowed in free atlas tier, so filtering will be done in the code
@@ -17,7 +28,9 @@ export const getSingleGroup = async (senderId: string, receiverId: string): Prom
     // );
 
     const groups: IGroup[] = await Group.find({ members: { $all: [...groupMembers] } });
-    const group: IGroup = groups.find((arg: IGroup) => arg.members.length = 2) as IGroup;
+    let group: IGroup = groups.find((arg: IGroup) => arg.members.length = 2) as IGroup;
+
+    const remappedResponse = await getUserInfo(group?.members ?? []);
 
     //TODO Add error handling if group is undefined or empty 
     if (!group) {
@@ -27,10 +40,14 @@ export const getSingleGroup = async (senderId: string, receiverId: string): Prom
             members: [...groupMembers],
         });
 
-        return await newGroup.save();
+        group = await newGroup.save();
     }
 
-    return group;
+    const response: IGroupWithUserInfo = {
+        group,
+        usersInfo: [...remappedResponse]
+    }
+    return response;
 }
 
 const getCollectiveGroup = async (groupMembers: string[]): Promise<IGroup[]> => {
@@ -39,6 +56,17 @@ const getCollectiveGroup = async (groupMembers: string[]): Promise<IGroup[]> => 
 
     return groups.filter((arg: IGroup) => arg.members.length > 2);
 }
+
+const getUserInfo = async (members: string[]): Promise<IUserInfo[]> => {
+    const users: IUser[] = await User.find({ _id: { $in: members } })
+    return users?.map((user) => {
+        return {
+            id: user.id,
+            fullname: `${user.name} ${user.surname}`
+        }
+    });
+}
+
 
 export const getAllUserCollectiveGroups = async (groupMember: string): Promise<IGroup[]> => {
     const groups = await Group.find({ members: { $in: [groupMember] } });

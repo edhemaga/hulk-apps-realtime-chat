@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //TODO izbaciti u poseban fajl
 //CORS
-const allowedOrigins = [String(process.env.BE)];
+const allowedOrigins = [String(process.env.FE)];
 
 const options: cors.CorsOptions = {
     origin: allowedOrigins
@@ -42,7 +42,7 @@ app.use(cors(options));
 //Socket init
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: { origin: String(process.env.BE), methods: ["GET", "POST"] },
+    cors: { origin: String(process.env.FE), methods: ["GET", "POST"] },
 });
 
 io.use(validateTokenForSocket);
@@ -52,6 +52,7 @@ mongoose.connect(process.env.MONGO_DB ?? '')
     .then(() =>
         //Entire server needs to be listening, not only app 
         server.listen(port, () => {
+            console.log(process.env.FE)
             io.on('connection', (socket: Socket) => {
                 socket.on('send_message', async (data: IMessage) => {
                     const message = await createMessage(data);

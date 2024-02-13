@@ -1,74 +1,52 @@
 import express, { Request, Response } from 'express';
 
 //Model
-import { IGroup } from '../models/Group/IGroup';
 import { IUser, IUserLogin, IUserRegistration } from '../models/User/IUser';
 
 //Service
-import { login } from '../services/User';
+import { createUser, getAllUsersWithoutCurrentUser, login } from '../services/User';
 
 //Middleware
-import { emptyBodyCheck } from './middleware/middleware';
+import { emptyBodyCheck, validateToken } from './middleware/middleware';
+import { getAllUserCollectiveGroups } from '../services/Group';
 
 const router = express.Router();
 
-//DEMO
-var users: Partial<IUser>[] = [
-    {
-        id: "1",
-        isDeleted: false,
-        createdOn: new Date(),
-        name: "John",
-        surname: "Doe",
-        dob: new Date("1990-01-01"),
-        email: "john.doe@example.com",
-    },
-    {
-        id: "2",
-        isDeleted: false,
-        createdOn: new Date(),
-        name: "Jane",
-        surname: "Doe",
-        dob: new Date("1985-05-15"),
-        email: "jane.doe2@example.com",
-    }
-];
+router.get('/info/:id', [validateToken], async (req: Request, res: Response) => {
+    const userId: string = req.params.id;
 
-const groups: IGroup[] = [
-    {
-        id: "1",
-        isDeleted: false,
-        createdOn: new Date(),
-        name: "Gizavci"
-    },
-    {
-        id: "2",
-        isDeleted: false,
-        createdOn: new Date(),
-        name: "Lizavci"
-    }
-]
-
-router.get('/info', (req: Request, res: Response) => {
     const response = {
-        persons: users,
-        groups
+        persons: await getAllUsersWithoutCurrentUser(userId),
+        groups: await getAllUserCollectiveGroups(userId)
     }
     res.status(200).json(response);
 })
 
-router.post('/register', [emptyBodyCheck], (req: Request, res: Response) => {
-    const user = req.body as IUserRegistration;
-    if (user.password != user.confirmedPassword) res.status(400).json({ message: 'Password do not match!' })
+router.post('/register', [emptyBodyCheck], async (req: Request, res: Response) => {
+    try {
+        const user = req.body as IUserRegistration;
+
+        if (user.password != user.confirmedPassword) {
+            res.status(400).json({ message: 'Password do not match!' })
+        }
+        else {
+            await createUser(user);
+            res.status(200).json("User successfully created!");
+        };
+    } catch (err) {
+        res.status(400).json(err);
+    }
 });
 
-router.post('/login', [emptyBodyCheck], (req: Request, res: Response) => {
-    const user = req.body as IUserLogin;
-    const token = login(user.username, user.password);
-    if (token)
+router.post('/login', [emptyBodyCheck], async (req: Request, res: Response) => {
+    try {
+        const user = req.body as IUserLogin;
+        const token = await login(user.username, user.password);
         res.status(200).json(token);
-    else
+
+    } catch (err) {
         res.status(401).json("Access could not be granted!");
+    }
 });
 
 export default router;

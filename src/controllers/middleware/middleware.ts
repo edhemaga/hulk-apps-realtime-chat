@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Socket } from "socket.io";
+import { JwtPayloadUserClaims } from "../../models/Base/Jwt";
 
 export const emptyBodyCheck = (req: Request, res: Response, next: NextFunction) => {
     const emptyBody =
@@ -27,6 +28,17 @@ export const validateToken = (
             return res.sendStatus(403);
         next();
     })
+}
+
+export const decodeToken = (authHeader: string | undefined): JwtPayloadUserClaims | null => {
+    if (!authHeader) return null;
+    const token = (authHeader && authHeader.split(' ')[1]) ?? null;
+
+    const decoded: JwtPayloadUserClaims = jwt.verify(token, (process.env.SECRET_KEY || '')) as JwtPayloadUserClaims;
+    
+    if (!decoded) return null;
+
+    return decoded;
 }
 
 export const validateTokenForSocket = (socket: Socket, next: (err?: Error) => void) => {

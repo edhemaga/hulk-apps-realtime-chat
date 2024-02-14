@@ -4,10 +4,11 @@ import express, { Request, Response } from 'express';
 import { INewGroup } from '../models/Group/IGroup';
 
 //Service
-import { createGroup, getRoom, getSingleGroup } from '../services/Group';
+import { createGroup, getRoom, getSingleGroup, leaveGroup, /*leaveGroup */ } from '../services/Group';
 
 //Middleware
-import { emptyBodyCheck, validateToken } from './middleware/middleware';
+import { decodeToken, emptyBodyCheck, validateToken } from './middleware/middleware';
+import { JwtPayloadUserClaims } from '../models/Base/Jwt';
 
 const router = express.Router();
 
@@ -17,6 +18,26 @@ router.get('/room/:id', [validateToken], async (req: Request, res: Response) => 
     res.status(200).json(group);
 
 })
+
+router.get('/leave/:groupId', [validateToken], async (req: Request, res: Response) => {
+    const user: JwtPayloadUserClaims | null = decodeToken(req.headers['authorization']);
+    if (user) {
+        try {
+            const groupId: string = req.params.groupId;
+            if (user !== null || groupId !== 'undefined') {
+                await leaveGroup(groupId, user.id);
+                res.status(200).json("Group left!")
+            } else {
+                throw new Error("Bad request!")
+            }
+        } catch (err) {
+            res.status(400).json(err as String);
+        }
+    } else {
+        res.status(400).json("User could not be found!")
+    }
+})
+
 router.get('/:senderId/:receiverId', [validateToken], async (req: Request, res: Response) => {
     const senderId = req.params.senderId;
     const receiverId = req.params.receiverId;
@@ -29,11 +50,16 @@ router.get('/:senderId/:receiverId', [validateToken], async (req: Request, res: 
     }
 });
 
+
 router.post('/', [validateToken, emptyBodyCheck], async (req: Request, res: Response) => {
     //TODO add error handling
-    const group: INewGroup = req.body;
-    await createGroup(group);
-    res.status(200).json("Group sucessfully created!")
+    try {
+        const group: INewGroup = req.body;
+        await createGroup(group);
+        res.status(200).json("Group sucessfully created!");
+    } catch (err) {
+        res.status(500).json("An error has occured!")
+    }
 })
 
 export default router;

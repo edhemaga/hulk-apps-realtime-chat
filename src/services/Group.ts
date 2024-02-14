@@ -67,7 +67,6 @@ const getUserInfo = async (members: string[]): Promise<IUserInfo[]> => {
     });
 }
 
-
 export const getAllUserCollectiveGroups = async (groupMember: string): Promise<IGroup[]> => {
     const groups = await Group.find({ members: { $in: [groupMember] } });
 
@@ -86,5 +85,16 @@ export const createGroup = async (newGroup: INewGroup) => {
             messages: []
         })
         await group.save();
+    }
+}
+
+export const leaveGroup = async (groupId: string, userId: string) => {
+    try {
+        await Group.findByIdAndUpdate(
+            groupId,
+            { $pull: { members: userId } },
+        );
+    } catch (err) {
+        throw new Error("An error has occured! Group could not be left!")
     }
 }

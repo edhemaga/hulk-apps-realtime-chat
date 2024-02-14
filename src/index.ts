@@ -32,8 +32,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //TODO izbaciti u poseban fajl
 //CORS
-const allowedOrigins = [String(process.env.FE)];
-
+const allowedOrigins = ['http://localhost:3000'];
+console.log(allowedOrigins);
 const options: cors.CorsOptions = {
     origin: allowedOrigins
 };
@@ -42,7 +42,10 @@ app.use(cors(options));
 //Socket init
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: { origin: String(process.env.FE), methods: ["GET", "POST"] },
+    cors: {
+        origin: String(process.env.FE),
+        methods: ["GET", "POST"]
+    },
 });
 
 io.use(validateTokenForSocket);
@@ -55,7 +58,7 @@ mongoose.connect(process.env.MONGO_DB ?? '')
             io.on('connection', (socket: Socket) => {
                 socket.on('send_message', async (data: IMessage) => {
                     const message = await createMessage(data);
-                    console.log(data)
+                    console.log(data);
                     //io must emit instead of socket, because with socket your message would be returned only to the client it sent
                     io.emit(
                         `receive_message_group_${data.groupId}`,

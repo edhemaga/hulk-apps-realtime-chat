@@ -32,8 +32,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //TODO izbaciti u poseban fajl
 //CORS
-const allowedOrigins = ['http://localhost:3000'];
-console.log(allowedOrigins);
+const allowedOrigins = [String(process.env.FE)];
+
 const options: cors.CorsOptions = {
     origin: allowedOrigins
 };
